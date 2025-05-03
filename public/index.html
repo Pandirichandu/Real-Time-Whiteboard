@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 Modern Whiteboard</title>
+  <style>
+    /* Base styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      color: #fff;
+      padding: 20px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 0 20px #00e6e6, 0 0 30px #00e6e6;
+      animation: neonFlicker 2s infinite alternate;
+    }
+
+    @keyframes neonFlicker {
+      from { text-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6; }
+      to { text-shadow: 0 0 20px #00e6e6, 0 0 40px #00e6e6; }
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(0, 255, 255, 0.4);
+      backdrop-filter: blur(15px);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00ffff50;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+
+    .toolbar:hover {
+      transform: scale(1.03);
+    }
+
+    .toolbar button, .toolbar select {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #00f260, #0575e6);
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #00f2ff;
+    }
+
+    .toolbar button:hover, .toolbar select:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 0 25px #00f2ff, 0 0 40px #00f2ff;
+    }
+
+    .toolbar input[type="color"] {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background: none;
+    }
+
+    .toolbar input[type="color"]:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 15px #00f2ff;
+    }
+
+    canvas {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(0, 255, 255, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00f2ff40;
+      transition: all 0.4s;
+    }
+
+    canvas:hover {
+      box-shadow: 0 0 35px #00f2ff70, 0 0 60px #00f2ff70;
+      transform: scale(1.01);
+    }
+
+    .user-list {
+      margin-top: 20px;
+      padding: 15px 25px;
+      border-radius: 15px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 15px #00f2ff50;
+      font-size: 1.4rem;
+      animation: fadeInUp 1s;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⚡ Modern Whiteboard</h1>
+
+  <div class="toolbar">
+    <input type="color" id="colorPicker" value="#ffffff" title="Pick a Color">
+    <select id="brushSize" title="Select Brush Size">
+      <option value="2" style="background-color: black;">2px</option>
+      <option value="5" style="background-color: black;">5px</option>
+      <option value="10" style="background-color: black;" selected>10px</option>
+      <option value="20" style="background-color: black;">20px</option>
+    </select>
+    <button id="eraser" title="Use Eraser">🧹 Eraser</button>
+    <button id="clearCanvas" title="Clear Drawing">🗑️ Clear</button>
+    <button id="saveImage" title="Save as Image">💾 Save Image</button>
+  </div>
+
+  <canvas id="whiteboard"></canvas>
+
+  <div class="user-list">
+    <strong>Connected Users:</strong> <span id="usersCount">0</span>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth * 0.9;
+      canvas.height = window.innerHeight * 0.7;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const colorPicker = document.getElementById('colorPicker');
+    const brushSize = document.getElementById('brushSize');
+    const eraser = document.getElementById('eraser');
+    const clearCanvas = document.getElementById('clearCanvas');
+    const saveImage = document.getElementById('saveImage');
+    const usersCount = document.getElementById('usersCount');
+
+    let drawing = false;
+    let currentColor = '#ffffff';
+    let currentBrushSize = 10;
+    let isErasing = false;
+
+    const socket = io();
+
+    canvas.addEventListener('mousedown', (e) => {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (drawing) {
+        ctx.strokeStyle = isErasing ? '#000000' : currentColor;
+        ctx.lineWidth = currentBrushSize;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+
+        socket.emit('draw', {
+          x: e.offsetX,
+          y: e.offsetY,
+          color: isErasing ? '#000000' : currentColor,
+          brushSize: currentBrushSize,
+          type: 'draw',
+        });
+      }
+    });
+
+    ['mouseup', 'mouseleave'].forEach(event => {
+      canvas.addEventListener(event, () => {
+        if (drawing) {
+          drawing = false;
+          ctx.closePath();
+        }
+      });
+    });
+
+    socket.on('draw', (data) => {
+      ctx.strokeStyle = data.color;
+      ctx.lineWidth = data.brushSize;
+      ctx.lineTo(data.x, data.y);
+      ctx.stroke();
+    });
+
+    colorPicker.addEventListener('input', (e) => {
+      currentColor = e.target.value;
+      isErasing = false;
+    });
+
+    brushSize.addEventListener('change', (e) => {
+      currentBrushSize = parseInt(e.target.value);
+    });
+
+    eraser.addEventListener('click', () => {
+      isErasing = true;
+    });
+
+    clearCanvas.addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      socket.emit('clear');
+    });
+
+    saveImage.addEventListener('click', () => {
+      const dataURL = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataURL;
+      a.download = 'whiteboard.png';
+      a.click();
+    });
+
+    socket.on('clear', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    socket.on('usersCount', (count) => {
+      usersCount.textContent = count;
+    });
+  </script>
+
+</body>
+</html>
