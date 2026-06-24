@@ -1,0 +1,199 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BoardRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum Visibility {
+  PRIVATE
+  TEAM
+  PUBLIC
+}
+
+model User {
+  id            String              @id @default(uuid())
+  email         String              @unique
+  name          String
+  passwordHash  String?
+  avatarUrl     String?
+  role          Role                @default(USER)
+  plan          String              @default("FREE")
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  
+  // Relations
+  teams         TeamMember[]
+  boardsCreated Board[]             @relation("BoardOwner")
+  collaborations BoardCollaborator[]
+  comments      Comment[]
+  activityLogs  ActivityLog[]
+  sessions      Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String   @unique
+  userAgent    String?
+  ipAddress    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Team {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  // Relations
+  members     TeamMember[]
+  boards      Board[]
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      String   @default("MEMBER") // OWNER, ADMIN, MEMBER
+  createdAt DateTime @default(now())
+  
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+}
+
+model Board {
+  id           String              @id @default(uuid())
+  title        String
+  description  String?
+  ownerId      String
+  teamId       String?
+  visibility   Visibility          @default(PRIVATE)
+  inviteCode   String?             @unique
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  isArchived   Boolean             @default(false)
+  isTemplate   Boolean             @default(false)
+  yjsState     Bytes?
+  
+  // Relations
+  owner        User                @relation("BoardOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  team         Team?               @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  collaborators BoardCollaborator[]
+  comments     Comment[]
+  versions     BoardVersion[]
+  elements     BoardElement[]
+}
+
+model BoardCollaborator {
+  id        String    @id @default(uuid())
+  boardId   String
+  userId    String
+  role      BoardRole @default(VIEWER)
+  createdAt DateTime  @default(now())
+  
+  board     Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([boardId, userId])
+  @@index([userId])
+}
+
+model BoardElement {
+  id         String   @id @default(uuid())
+  boardId    String
+  type       String   // pen, rect, circle, sticky, text, image, etc.
+  x          Float
+  y          Float
+  width      Float?
+  height     Float?
+  scaleX     Float    @default(1)
+  scaleY     Float    @default(1)
+  fill       String?
+  stroke     String?
+  strokeWidth Float?
+  angle      Float    @default(0)
+  text       String?
+  fontFamily String?
+  fontSize   Float?
+  opacity    Float    @default(1)
+  layerOrder Int      @default(0)
+  extraData  Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  board      Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@index([boardId])
+}
+
+model BoardVersion {
+  id         String   @id @default(uuid())
+  boardId    String
+  version    Int
+  snapshotUrl String
+  yjsState   Bytes?
+  createdAt  DateTime @default(now())
+  createdById String
+
+  board      Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@index([boardId])
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  boardId   String
+  userId    String
+  text      String
+  x         Float
+  y         Float
+  resolved  Boolean   @default(false)
+  parentId  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  board     Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("Replies")
+
+  @@index([boardId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

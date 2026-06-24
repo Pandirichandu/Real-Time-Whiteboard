@@ -1,16 +1,17 @@
 {
-  "name": "real-time-whiteboard",
+  "name": "collaborative-whiteboard-workspace",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/server",
+    "apps/client"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "express": "^4.21.2",
-    "socket.io": "^4.8.1"
+    "dev:server": "npm run dev --workspace=apps/server",
+    "dev:client": "npm run dev --workspace=apps/client",
+    "build:server": "npm run build --workspace=apps/server",
+    "build:client": "npm run build --workspace=apps/client",
+    "db:migrate": "npm run prisma:migrate --workspace=apps/server",
+    "db:generate": "npm run prisma:generate --workspace=apps/server"
   }
 }

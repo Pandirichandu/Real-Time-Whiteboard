@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: whiteboard-db
+    environment:
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: whiteboard_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - whiteboard-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d whiteboard_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: whiteboard-cache
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    networks:
+      - whiteboard-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    container_name: whiteboard-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DATABASE_URL=postgresql://dev_user:dev_password@postgres:5432/whiteboard_dev?schema=public
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=super_secret_jwt_key
+      - REFRESH_JWT_SECRET=super_secret_refresh_key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/server:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - whiteboard-net
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:5000/health', (r) => { if (r.statusCode === 200) process.exit(0); else process.exit(1); }).on('error', () => process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  client:
+    build:
+      context: ./apps/client
+      dockerfile: Dockerfile
+    container_name: whiteboard-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+      - VITE_WS_URL=ws://localhost:5000
+    depends_on:
+      server:
+        condition: service_healthy
+    volumes:
+      - ./apps/client:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - whiteboard-net
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  whiteboard-net:
+    driver: bridge

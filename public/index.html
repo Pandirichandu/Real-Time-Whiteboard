@@ -3,260 +3,683 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚀 Modern Whiteboard</title>
+  <title>Modern & Advanced Whiteboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* Base styling */
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --secondary: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 0.25rem;
+      --radius-md: 0.375rem;
+      --radius-lg: 0.5rem;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
     }
-    
+
     body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: var(--dark);
       min-height: 100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
       display: flex;
       flex-direction: column;
+      
+    }
+
+    header {
+      background-color: white;
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      overflow-x: hidden;
-      color: #fff;
-      padding: 20px;
     }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
-    h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      margin-bottom: 20px;
-      text-align: center;
-      color: #fff;
-      text-shadow: 0 0 20px #00e6e6, 0 0 30px #00e6e6;
-      animation: neonFlicker 2s infinite alternate;
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
     }
 
-    @keyframes neonFlicker {
-      from { text-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6; }
-      to { text-shadow: 0 0 20px #00e6e6, 0 0 40px #00e6e6; }
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .user-count {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--secondary);
+    }
+
+    .user-count-badge {
+      background-color: var(--primary-light);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .whiteboard-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      height: 100%;
+      
+      
     }
 
     .toolbar {
       display: flex;
-      gap: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(0, 255, 255, 0.4);
-      backdrop-filter: blur(15px);
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 25px #00ffff50;
-      margin-bottom: 30px;
       flex-wrap: wrap;
-      justify-content: center;
-      transition: transform 0.3s;
+      gap: 0.75rem;
+      background-color: white;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
     }
 
-    .toolbar:hover {
-      transform: scale(1.03);
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-right: 0.75rem;
+      border-right: 1px solid var(--border);
     }
 
-    .toolbar button, .toolbar select {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #00f260, #0575e6);
+    .toolbar-group:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
       color: white;
-      font-weight: 600;
-      font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background-color: white;
+      border-color: var(--border);
+      color: var(--dark);
+    }
+
+    .btn-outline:hover {
+      background-color: #f8fafc;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #0d9488;
+    }
+
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .color-picker {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 15px #00f2ff;
+      padding: 0;
     }
 
-    .toolbar button:hover, .toolbar select:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 0 25px #00f2ff, 0 0 40px #00f2ff;
-    }
-
-    .toolbar input[type="color"] {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
+    .color-picker::-webkit-color-swatch {
       border: none;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-      background: none;
+      border-radius: var(--radius-sm);
     }
 
-    .toolbar input[type="color"]:hover {
-      transform: scale(1.2);
-      box-shadow: 0 0 15px #00f2ff;
+    select {
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 0.875rem;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    .canvas-wrapper {
+      flex: 1;
+      min-height: 800px;
+      height: 70vh;
+      background-color: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
     }
 
     canvas {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(0, 255, 255, 0.2);
-      border-radius: 20px;
-      box-shadow: 0 0 25px #00f2ff40;
-      transition: all 0.4s;
+      display: block;
+      background-color: white;
+      width: 100%;
+      height: 100%;
     }
 
-    canvas:hover {
-      box-shadow: 0 0 35px #00f2ff70, 0 0 60px #00f2ff70;
-      transform: scale(1.01);
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+      color: var(--secondary);
     }
 
-    .user-list {
-      margin-top: 20px;
-      padding: 15px 25px;
-      border-radius: 15px;
-      background: rgba(0, 255, 255, 0.1);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 0 15px #00f2ff50;
-      font-size: 1.4rem;
-      animation: fadeInUp 1s;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .cursor-position {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
     }
 
     @media (max-width: 768px) {
-      h1 {
-        font-size: 2.5rem;
+      .toolbar-group {
+        border-right: none;
+        padding-right: 0;
+      }
+      
+      .header-content {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
       }
     }
+
+ /* Button animation styles */
+  .btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Ripple effect animation */
+  .btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+
+  .btn:focus:not(:active)::after {
+    animation: ripple 0.6s ease-out;
+  }
+
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(20, 20);
+      opacity: 0;
+    }
+  }
+
+  /* Special animation for active tools */
+  .btn-primary {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+  }
+
+  /* Bounce animation for save button */
+  #saveImage:hover {
+    animation: bounce 0.5s;
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-3px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* Shake animation for clear button */
+  #clearCanvas:hover {
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    20%, 60% {
+      transform: translateX(-3px);
+    }
+    40%, 80% {
+      transform: translateX(3px);
+    }
+  }
+
+
+
   </style>
 </head>
 <body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">WB</div>
+        <div class="logo-text">Modern & Advanced Whiteboard</div>
+      </div>
+      <div class="user-count">
+        <span>Active users:</span>
+        <span class="user-count-badge" id="usersCount">0</span>
+      </div>
+    </div>
+  </header>
 
-  <h1>⚡ Modern Whiteboard</h1>
+  <main>
+    <div class="whiteboard-container">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <input type="color" id="colorPicker" class="color-picker" value="#000000" title="Stroke Color">
+          <select id="brushSize" title="Brush Size">
+            <option value="1">1px</option>
+            <option value="3">3px</option>
+            <option value="5" selected>5px</option>
+            <option value="10">10px</option>
+            <option value="15">15px</option>
+            <option value="20">20px</option>
+          </select>
+        </div>
+        
+        <div class="toolbar-group">
+          <button id="eraser" class="btn btn-outline btn-sm" title="Eraser">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 21h10a2 2 0 0 0 2-2V9.414a1 1 0 0 0-.293-.707l-5.414-5.414A1 1 0 0 0 12.586 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z"></path>
+            </svg>
+            Eraser
+          </button>
+          <button id="clearCanvas" class="btn btn-outline btn-sm" title="Clear Canvas">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Clear
+          </button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button id="saveImage" class="btn btn-success btn-sm" title="Save as Image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save
+          </button>
+        </div>
+      </div>
 
-  <div class="toolbar">
-    <input type="color" id="colorPicker" value="#ffffff" title="Pick a Color">
-    <select id="brushSize" title="Select Brush Size">
-      <option value="2" style="background-color: black;">2px</option>
-      <option value="5" style="background-color: black;">5px</option>
-      <option value="10" style="background-color: black;" selected>10px</option>
-      <option value="20" style="background-color: black;">20px</option>
-    </select>
-    <button id="eraser" title="Use Eraser">🧹 Eraser</button>
-    <button id="clearCanvas" title="Clear Drawing">🗑️ Clear</button>
-    <button id="saveImage" title="Save as Image">💾 Save Image</button>
-  </div>
+      <div class="canvas-wrapper">
+        <canvas id="whiteboard"></canvas>
+      </div>
 
-  <canvas id="whiteboard"></canvas>
-
-  <div class="user-list">
-    <strong>Connected Users:</strong> <span id="usersCount">0</span>
-  </div>
+      <div class="status-bar">
+        <div class="cursor-position" id="cursorPosition">X: 0, Y: 0</div>
+        <div>Brush size: <span id="currentBrushSize">5</span>px</div>
+      </div>
+    </div>
+  </main>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const canvas = document.getElementById('whiteboard');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth * 0.9;
-      canvas.height = window.innerHeight * 0.7;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    const colorPicker = document.getElementById('colorPicker');
-    const brushSize = document.getElementById('brushSize');
-    const eraser = document.getElementById('eraser');
-    const clearCanvas = document.getElementById('clearCanvas');
-    const saveImage = document.getElementById('saveImage');
-    const usersCount = document.getElementById('usersCount');
-
-    let drawing = false;
-    let currentColor = '#ffffff';
-    let currentBrushSize = 10;
-    let isErasing = false;
-
-    const socket = io();
-
-    canvas.addEventListener('mousedown', (e) => {
-      drawing = true;
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-      if (drawing) {
-        ctx.strokeStyle = isErasing ? '#000000' : currentColor;
-        ctx.lineWidth = currentBrushSize;
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-
+    document.addEventListener('DOMContentLoaded', () => {
+      // Canvas setup
+      const canvas = document.getElementById('whiteboard');
+      const ctx = canvas.getContext('2d');
+      
+      // UI elements
+      const colorPicker = document.getElementById('colorPicker');
+      const brushSize = document.getElementById('brushSize');
+      const eraser = document.getElementById('eraser');
+      const clearCanvas = document.getElementById('clearCanvas');
+      const saveImage = document.getElementById('saveImage');
+      const usersCount = document.getElementById('usersCount');
+      const cursorPosition = document.getElementById('cursorPosition');
+      const currentBrushSize = document.getElementById('currentBrushSize');
+      
+      // Drawing state
+      let drawing = false;
+      let currentColor = colorPicker.value;
+      let currentBrushSizeValue = parseInt(brushSize.value);
+      let isErasing = false;
+      let lastX = 0;
+      let lastY = 0;
+      
+      // Socket connection
+      const socket = io();
+      
+      // Resize canvas to fit container
+      function resizeCanvas() {
+        const container = canvas.parentElement;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        
+        // Redraw any existing content (for when window is resized)
+        if (socket) {
+          socket.emit('requestCanvasState');
+        }
+      }
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      
+      // Initialize canvas with white background
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Drawing functions
+      function startDrawing(e) {
+        drawing = true;
+        [lastX, lastY] = getCoordinates(e);
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        
+        // Draw initial point
+        drawPoint(lastX, lastY);
+        
+        // Emit drawing start
         socket.emit('draw', {
-          x: e.offsetX,
-          y: e.offsetY,
-          color: isErasing ? '#000000' : currentColor,
-          brushSize: currentBrushSize,
-          type: 'draw',
+          x: lastX,
+          y: lastY,
+          color: isErasing ? 'white' : currentColor,
+          brushSize: currentBrushSizeValue,
+          type: 'start'
         });
       }
-    });
-
-    ['mouseup', 'mouseleave'].forEach(event => {
-      canvas.addEventListener(event, () => {
+      
+      function draw(e) {
+        if (!drawing) return;
+        
+        const [x, y] = getCoordinates(e);
+        
+        ctx.strokeStyle = isErasing ? 'white' : currentColor;
+        ctx.lineWidth = currentBrushSizeValue;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        
+        // Emit drawing data
+        socket.emit('draw', {
+          x,
+          y,
+          color: isErasing ? 'white' : currentColor,
+          brushSize: currentBrushSizeValue,
+          type: 'draw'
+        });
+        
+        lastX = x;
+        lastY = y;
+      }
+      
+      function drawPoint(x, y) {
+        ctx.fillStyle = isErasing ? 'white' : currentColor;
+        ctx.beginPath();
+        ctx.arc(x, y, currentBrushSizeValue / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      function stopDrawing() {
         if (drawing) {
           drawing = false;
           ctx.closePath();
+          
+          // Emit drawing end
+          socket.emit('draw', {
+            type: 'end'
+          });
+        }
+      }
+      
+      function getCoordinates(e) {
+        let x, y;
+        
+        if (e.type.includes('touch')) {
+          const rect = canvas.getBoundingClientRect();
+          x = e.touches[0].clientX - rect.left;
+          y = e.touches[0].clientY - rect.top;
+        } else {
+          x = e.offsetX;
+          y = e.offsetY;
+        }
+        
+        return [x, y];
+      }
+      
+      function updateCursorPosition(e) {
+        const [x, y] = getCoordinates(e);
+        cursorPosition.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
+      }
+      
+      // Event listeners
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mousemove', updateCursorPosition);
+      canvas.addEventListener('mouseup', stopDrawing);
+      canvas.addEventListener('mouseleave', stopDrawing);
+      
+      // Touch support
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startDrawing(e);
+      });
+      
+      canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        draw(e);
+        updateCursorPosition(e);
+      });
+      
+      canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        stopDrawing();
+      });
+      
+      colorPicker.addEventListener('input', (e) => {
+        currentColor = e.target.value;
+        isErasing = false;
+        eraser.classList.remove('btn-primary');
+        eraser.classList.add('btn-outline');
+      });
+      
+      brushSize.addEventListener('change', (e) => {
+        currentBrushSizeValue = parseInt(e.target.value);
+        currentBrushSize.textContent = currentBrushSizeValue;
+      });
+      
+      eraser.addEventListener('click', () => {
+        isErasing = !isErasing;
+        
+        if (isErasing) {
+          eraser.classList.remove('btn-outline');
+          eraser.classList.add('btn-primary');
+        } else {
+          eraser.classList.remove('btn-primary');
+          eraser.classList.add('btn-outline');
         }
       });
-    });
-
-    socket.on('draw', (data) => {
-      ctx.strokeStyle = data.color;
-      ctx.lineWidth = data.brushSize;
-      ctx.lineTo(data.x, data.y);
-      ctx.stroke();
-    });
-
-    colorPicker.addEventListener('input', (e) => {
-      currentColor = e.target.value;
-      isErasing = false;
-    });
-
-    brushSize.addEventListener('change', (e) => {
-      currentBrushSize = parseInt(e.target.value);
-    });
-
-    eraser.addEventListener('click', () => {
-      isErasing = true;
-    });
-
-    clearCanvas.addEventListener('click', () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      socket.emit('clear');
-    });
-
-    saveImage.addEventListener('click', () => {
-      const dataURL = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = dataURL;
-      a.download = 'whiteboard.png';
-      a.click();
-    });
-
-    socket.on('clear', () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    });
-
-    socket.on('usersCount', (count) => {
-      usersCount.textContent = count;
+      
+      clearCanvas.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear the canvas?')) {
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          socket.emit('clear');
+        }
+      });
+      
+      saveImage.addEventListener('click', () => {
+        const dataURL = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataURL;
+        a.download = `whiteboard-${new Date().toISOString().slice(0, 10)}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+      
+      // Socket event handlers
+      socket.on('draw', (data) => {
+        switch (data.type) {
+          case 'start':
+            ctx.beginPath();
+            ctx.moveTo(data.x, data.y);
+            drawPoint(data.x, data.y);
+            break;
+          case 'draw':
+            ctx.strokeStyle = data.color;
+            ctx.lineWidth = data.brushSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineTo(data.x, data.y);
+            ctx.stroke();
+            break;
+          case 'end':
+            ctx.closePath();
+            break;
+        }
+      });
+      
+      socket.on('clear', () => {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      });
+      
+      socket.on('usersCount', (count) => {
+        usersCount.textContent = count;
+      });
+      
+      socket.on('canvasState', (state) => {
+        if (state) {
+          const img = new Image();
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0);
+          };
+          img.src = state;
+        }
+      });
+      
+      // Request canvas state when connecting
+      socket.on('connect', () => {
+        socket.emit('requestCanvasState');
+      });
+      
+      // Initialize brush size display
+      currentBrushSize.textContent = currentBrushSizeValue;
     });
   </script>
-
 </body>
 </html>
